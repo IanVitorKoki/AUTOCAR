@@ -1,4 +1,4 @@
-import { CarFront, LayoutDashboard, ReceiptText, Wrench } from 'lucide-react';
+import { CarFront, LayoutDashboard } from 'lucide-react';
 
 export const maintenanceTypes = [
   { value: 'troca-de-oleo', label: 'Troca de óleo' },
@@ -31,20 +31,8 @@ export const navItems = [
   {
     to: '/vehicles',
     label: 'Veículos',
-    description: 'Cadastro e gestão da frota',
+    description: 'Acesso a veículos, manutenções e gastos',
     icon: CarFront,
-  },
-  {
-    to: '/vehicles',
-    label: 'Manutenções',
-    description: 'Histórico e serviços executados',
-    icon: Wrench,
-  },
-  {
-    to: '/vehicles',
-    label: 'Gastos',
-    description: 'Despesas por categoria',
-    icon: ReceiptText,
   },
 ];
 
@@ -74,4 +62,3 @@ export const defaultExpenseValues = {
 };
 
 export const plateRegex = /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/;
-

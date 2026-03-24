@@ -10,7 +10,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { normalizePlate, serializeCollection, serializeDoc } from '../lib/firestore';
-import { db } from './firebase';
+import { db } from '../firebase';
 
 function getVehiclePayload(values, userId) {
   return {
