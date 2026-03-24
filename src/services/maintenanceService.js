@@ -11,7 +11,7 @@ import {
 } from 'firebase/firestore';
 import { serializeCollection, serializeDoc } from '../lib/firestore';
 import { sortByDate } from '../utils/formatters';
-import { db } from '../firebase';
+import { db } from './firebase';
 
 function getMaintenancePayload(values, userId, vehicleId) {
   return {
@@ -96,4 +96,3 @@ export async function deleteMaintenance(maintenanceId, userId) {
 
   await deleteDoc(maintenanceRef);
 }
-

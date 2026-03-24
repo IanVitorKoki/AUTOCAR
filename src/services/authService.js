@@ -7,7 +7,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { serializeDoc } from '../lib/firestore';
-import { auth, db } from '../firebase';
+import { auth, db } from './firebase';
 
 export async function registerUser({ name, email, password }) {
   const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
