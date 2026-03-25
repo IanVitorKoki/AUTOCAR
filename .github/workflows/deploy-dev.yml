@@ -50,5 +50,4 @@ jobs:
         run: npm install -g firebase-tools@15.11.0
 
       - name: Deploy Firebase Hosting and rules
-        run: firebase deploy --project "$FIREBASE_PROJECT_ID" --only hosting,firestore:rules --non-interactive
-
+        run: firebase deploy --project "$FIREBASE_PROJECT_ID" --only hosting,firestore:rules,storage --non-interactive

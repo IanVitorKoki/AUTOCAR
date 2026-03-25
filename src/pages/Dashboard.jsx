@@ -334,9 +334,9 @@ function Dashboard() {
         />
         <SummaryCard
           icon={Wrench}
-          label="Lembretes ativos"
-          value={reminders.length}
-          hint="Itens com gatilho por data ou quilometragem."
+          label="Manutencoes registradas"
+          value={maintenances.length}
+          hint="Quantidade total de servicos lancados."
           accent="slate"
         />
       </section>

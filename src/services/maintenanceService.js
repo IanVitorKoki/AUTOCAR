@@ -147,15 +147,23 @@ export async function updateMaintenance(
       })
     : [];
 
-  await setDoc(
-    maintenanceRef,
-    {
-      ...snapshot.data(),
-      ...getMaintenancePayload(values, userId, vehicleId, [...keptAttachments, ...uploadedAttachments]),
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true },
-  );
+  try {
+    await setDoc(
+      maintenanceRef,
+      {
+        ...snapshot.data(),
+        ...getMaintenancePayload(values, userId, vehicleId, [...keptAttachments, ...uploadedAttachments]),
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+  } catch (error) {
+    if (uploadedAttachments.length) {
+      await deleteFilesByPaths(uploadedAttachments.map((attachment) => attachment.path));
+    }
+
+    throw error;
+  }
 
   return maintenanceId;
 }

@@ -12,28 +12,38 @@ function sanitizeFileName(fileName = '') {
 }
 
 export async function uploadMaintenanceFiles({ userId, vehicleId, maintenanceId, files }) {
-  const uploads = files.map(async (file) => {
-    const safeName = sanitizeFileName(file.name) || 'arquivo';
-    const filePath = `maintenance-files/${userId}/${vehicleId}/${maintenanceId}/${crypto.randomUUID()}-${safeName}`;
-    const storageRef = ref(storage, filePath);
+  const uploadedFiles = [];
 
-    await uploadBytes(storageRef, file, {
-      contentType: file.type,
-    });
+  try {
+    for (const file of files) {
+      const safeName = sanitizeFileName(file.name) || 'arquivo';
+      const filePath = `maintenance-files/${userId}/${vehicleId}/${maintenanceId}/${crypto.randomUUID()}-${safeName}`;
+      const storageRef = ref(storage, filePath);
 
-    const url = await getDownloadURL(storageRef);
+      await uploadBytes(storageRef, file, {
+        contentType: file.type,
+      });
 
-    return {
-      name: file.name,
-      url,
-      path: filePath,
-      contentType: file.type,
-      size: file.size,
-      uploadedAt: new Date().toISOString(),
-    };
-  });
+      const url = await getDownloadURL(storageRef);
 
-  return Promise.all(uploads);
+      uploadedFiles.push({
+        name: file.name,
+        url,
+        path: filePath,
+        contentType: file.type,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+      });
+    }
+
+    return uploadedFiles;
+  } catch (error) {
+    if (uploadedFiles.length) {
+      await deleteFilesByPaths(uploadedFiles.map((file) => file.path));
+    }
+
+    throw error;
+  }
 }
 
 export async function deleteFilesByPaths(paths = []) {
