@@ -10,6 +10,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { normalizePlate, serializeCollection, serializeDoc } from '../lib/firestore';
+import { deleteFilesByPaths } from './storageService';
 import { db } from '../firebase';
 
 function getVehiclePayload(values, userId) {
@@ -37,13 +38,13 @@ export async function getVehicleById(id, userId) {
   const snapshot = await getDoc(doc(db, 'vehicles', id));
 
   if (!snapshot.exists()) {
-    throw new Error('Veículo não encontrado.');
+    throw new Error('Veiculo nao encontrado.');
   }
 
   const vehicle = serializeDoc(snapshot);
 
   if (vehicle.userId !== userId) {
-    throw new Error('Você não tem permissão para acessar este veículo.');
+    throw new Error('Voce nao tem permissao para acessar este veiculo.');
   }
 
   return vehicle;
@@ -67,7 +68,7 @@ export async function updateVehicle(id, values, userId) {
   const snapshot = await getDoc(vehicleRef);
 
   if (!snapshot.exists() || snapshot.data().userId !== userId) {
-    throw new Error('Veículo não encontrado.');
+    throw new Error('Veiculo nao encontrado.');
   }
 
   await setDoc(
@@ -88,7 +89,7 @@ export async function deleteVehicle(id, userId) {
   const snapshot = await getDoc(vehicleRef);
 
   if (!snapshot.exists() || snapshot.data().userId !== userId) {
-    throw new Error('Veículo não encontrado.');
+    throw new Error('Veiculo nao encontrado.');
   }
 
   const batch = writeBatch(db);
@@ -97,9 +98,18 @@ export async function deleteVehicle(id, userId) {
   );
   const expensesSnapshot = await getDocs(query(collection(db, 'expenses'), where('userId', '==', userId)));
 
-  maintenancesSnapshot.docs
-    .filter((item) => item.data().vehicleId === id)
-    .forEach((item) => batch.delete(item.ref));
+  const vehicleMaintenances = maintenancesSnapshot.docs.filter((item) => item.data().vehicleId === id);
+  const attachmentPaths = vehicleMaintenances.flatMap((item) =>
+    Array.isArray(item.data().attachments)
+      ? item.data().attachments.map((attachment) => attachment.path).filter(Boolean)
+      : [],
+  );
+
+  if (attachmentPaths.length) {
+    await deleteFilesByPaths(attachmentPaths);
+  }
+
+  vehicleMaintenances.forEach((item) => batch.delete(item.ref));
 
   expensesSnapshot.docs
     .filter((item) => item.data().vehicleId === id)

@@ -1,19 +1,19 @@
 import { CarFront, LayoutDashboard } from 'lucide-react';
 
 export const maintenanceTypes = [
-  { value: 'troca-de-oleo', label: 'Troca de óleo' },
-  { value: 'revisao', label: 'Revisão' },
+  { value: 'troca-de-oleo', label: 'Troca de oleo' },
+  { value: 'revisao', label: 'Revisao' },
   { value: 'pneus', label: 'Pneus' },
   { value: 'freios', label: 'Freios' },
   { value: 'bateria', label: 'Bateria' },
-  { value: 'suspensao', label: 'Suspensão' },
+  { value: 'suspensao', label: 'Suspensao' },
   { value: 'alinhamento-balanceamento', label: 'Alinhamento e balanceamento' },
   { value: 'outro', label: 'Outro' },
 ];
 
 export const expenseCategories = [
-  { value: 'combustivel', label: 'Combustível' },
-  { value: 'manutencao', label: 'Manutenção' },
+  { value: 'combustivel', label: 'Combustivel' },
+  { value: 'manutencao', label: 'Manutencao' },
   { value: 'documento', label: 'Documento' },
   { value: 'seguro', label: 'Seguro' },
   { value: 'lavagem', label: 'Lavagem' },
@@ -30,8 +30,8 @@ export const navItems = [
   },
   {
     to: '/vehicles',
-    label: 'Veículos',
-    description: 'Acesso a veículos, manutenções e gastos',
+    label: 'Veiculos',
+    description: 'Acesso a veiculos, manutencoes e gastos',
     icon: CarFront,
   },
 ];
@@ -52,6 +52,9 @@ export const defaultMaintenanceValues = {
   cost: '',
   mileage: '',
   notes: '',
+  reminderLabel: '',
+  nextReminderDate: '',
+  nextReminderMileage: '',
 };
 
 export const defaultExpenseValues = {
@@ -62,3 +65,8 @@ export const defaultExpenseValues = {
 };
 
 export const plateRegex = /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/;
+
+export const maintenanceAttachmentConfig = {
+  maxFiles: 5,
+  maxSizeInBytes: 10 * 1024 * 1024,
+};

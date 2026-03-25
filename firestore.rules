@@ -26,13 +26,9 @@ service cloud.firestore {
       return value is string && value.matches('^\\d{4}-\\d{2}-\\d{2}$');
     }
 
-    function vehicleDocPath(vehicleId) {
-      return /databases/$(database)/documents/vehicles/$(vehicleId);
-    }
-
     function ownsVehicle(vehicleId) {
-      return exists(vehicleDocPath(vehicleId)) &&
-        get(vehicleDocPath(vehicleId)).data.userId == request.auth.uid;
+      return exists(/databases/$(database)/documents/vehicles/$(vehicleId)) &&
+        get(/databases/$(database)/documents/vehicles/$(vehicleId)).data.userId == request.auth.uid;
     }
 
     match /users/{userId} {
@@ -114,6 +110,10 @@ service cloud.firestore {
           'cost',
           'mileage',
           'notes',
+          'attachments',
+          'reminderLabel',
+          'nextReminderDate',
+          'nextReminderMileage',
           'createdAt',
           'updatedAt'
         ]) &&
@@ -126,7 +126,19 @@ service cloud.firestore {
         isPositiveNumber(request.resource.data.cost) &&
         isNonNegativeNumber(request.resource.data.mileage) &&
         request.resource.data.notes is string &&
-        request.resource.data.notes.size() <= 400;
+        request.resource.data.notes.size() <= 400 &&
+        request.resource.data.attachments is list &&
+        request.resource.data.attachments.size() <= 5 &&
+        request.resource.data.reminderLabel is string &&
+        request.resource.data.reminderLabel.size() <= 80 &&
+        (
+          request.resource.data.nextReminderDate == '' ||
+          isIsoDate(request.resource.data.nextReminderDate)
+        ) &&
+        (
+          request.resource.data.nextReminderMileage == null ||
+          isNonNegativeNumber(request.resource.data.nextReminderMileage)
+        );
 
       allow update: if isOwner(resource.data.userId) &&
         request.resource.data.keys().hasOnly([
@@ -139,6 +151,10 @@ service cloud.firestore {
           'cost',
           'mileage',
           'notes',
+          'attachments',
+          'reminderLabel',
+          'nextReminderDate',
+          'nextReminderMileage',
           'createdAt',
           'updatedAt'
         ]) &&
@@ -152,7 +168,19 @@ service cloud.firestore {
         isPositiveNumber(request.resource.data.cost) &&
         isNonNegativeNumber(request.resource.data.mileage) &&
         request.resource.data.notes is string &&
-        request.resource.data.notes.size() <= 400;
+        request.resource.data.notes.size() <= 400 &&
+        request.resource.data.attachments is list &&
+        request.resource.data.attachments.size() <= 5 &&
+        request.resource.data.reminderLabel is string &&
+        request.resource.data.reminderLabel.size() <= 80 &&
+        (
+          request.resource.data.nextReminderDate == '' ||
+          isIsoDate(request.resource.data.nextReminderDate)
+        ) &&
+        (
+          request.resource.data.nextReminderMileage == null ||
+          isNonNegativeNumber(request.resource.data.nextReminderMileage)
+        );
     }
 
     match /expenses/{expenseId} {
@@ -201,4 +229,3 @@ service cloud.firestore {
     }
   }
 }
-
